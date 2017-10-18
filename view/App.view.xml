@@ -1,0 +1,26 @@
+<mvc:View controllerName="barcodeScanner.controller.App" 
+	xmlns:html="http://www.w3.org/1999/xhtml" xmlns:mvc="sap.ui.core.mvc" 
+	xmlns:core="sap.ui.core"
+	xmlns:l="sap.ui.layout" xmlns:f="sap.ui.layout.form"
+	displayBlock="true" xmlns="sap.m">
+	
+	<f:SimpleForm 
+		layout="ResponsiveGridLayout" 
+		editable="true" 
+		labelSpanL="3"
+		labelSpanM="3"
+		emptySpanL="3"
+		emptySpanM="3"
+		columnsL="1" 
+		columnsM="1">
+		
+		<Label text="Label" />
+		<Input id="scannedValue" />
+		<Button icon="sap-icon://bar-code" text="Scan" tooltip="Scan barcode" visible="{device>/barcodeScanEnabled}" press="onScanForValue">
+			<layoutData>
+				<l:GridData span="L2 M2" />
+			</layoutData>
+		</Button>
+	</f:SimpleForm>
+
+</mvc:View>
