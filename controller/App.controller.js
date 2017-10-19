@@ -29,8 +29,11 @@ sap.ui.define([
 						// TODO: Investigate why Quagga.init needs to be called every time...possibly because DOM 
 						// element is destroyed each time dialog is closed
 						this._initQuagga(this.getView().byId("scanContainer").getDomRef()).done(function(){
+							// Initialisation done, start Quagga
 							Quagga.start();
 						}).fail(function(oError){
+							// Failed to initialise, show message and close dialog...this should not happen as we have
+							// already checked for camera device ni /model/models.js and hidden the scan button if none detected
 							MessageBox.error(oError.message.length ? oError.message : ("Failed to initialise Quagga with reason code " + oError.name),{
 								onClose: function(){
 									this._oScanDialog.close();
@@ -39,6 +42,7 @@ sap.ui.define([
 						}.bind(this));
 					}.bind(this),
 					afterClose			: function(){
+						// Dialog closed, stop Quagga
 						Quagga.stop();
 					}
 				});	
@@ -52,6 +56,7 @@ sap.ui.define([
 		_initQuagga: function(oTarget){
 			var oDeferred = jQuery.Deferred();
 			
+			// Initialise Quagga plugin - see https://serratus.github.io/quaggaJS/#configobject for details
 			Quagga.init({
 				inputStream: {
 					type		: "LiveStream",
@@ -84,20 +89,14 @@ sap.ui.define([
 			});
 			
 			if(!this._oQuaggaEventHandlersAttached){
+				// Attach event handlers...
+
 				Quagga.onProcessed(function(result) {
 					var drawingCtx = Quagga.canvas.ctx.overlay,
 						drawingCanvas = Quagga.canvas.dom.overlay;
 					
 					if (result) {
-						drawingCanvas.style.zIndex=100;
-						drawingCanvas.style.position="absolute";
-						drawingCanvas.style.width="100%";
-						drawingCanvas.style.height="100%";
-						drawingCanvas.style.top="50px";
-						drawingCanvas.style.bottom="0";
-						drawingCanvas.style.left="50px";
-						drawingCanvas.style.right="0";
-						
+						// The following will attempt to draw boxes around detected barcodes
 						if (result.boxes) {
 							drawingCtx.clearRect(0, 0, parseInt(drawingCanvas.getAttribute("width")), parseInt(drawingCanvas.getAttribute("height")));
 							result.boxes.filter(function (box) {
@@ -118,12 +117,17 @@ sap.ui.define([
 				}.bind(this));
 				
 				Quagga.onDetected(function(result) {
-					// Can do some validation on result.codeResult.code to make sure the correct formatted barcode value has
-					// been picked up
+					// Barcode has been detected, value will be in result.codeResult.code. If requierd, validations can be done 
+					// on result.codeResult.code to ensure the correct format/type of barcode value has been picked up
+
+					// Set barcode value in input field
 					this.getView().byId("scannedValue").setValue(result.codeResult.code);
+
+					// Close dialog
 					this._oScanDialog.close();
 				}.bind(this));
 				
+				// Set flag so that event handlers are only attached once...
 				this._oQuaggaEventHandlersAttached = true;
 			}
 			

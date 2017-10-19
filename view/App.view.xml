@@ -14,8 +14,8 @@
 		columnsL="1" 
 		columnsM="1">
 		
-		<Label text="Label" />
-		<Input id="scannedValue" />
+		<Label text="Barcode value" />
+		<Input id="scannedValue" placeholder="{= ${device>/barcodeScanEnabled} ? 'Use scan button to enter barcode' : 'Enter barcode manually' }" enabled="{= !${device>/barcodeScanEnabled} }" />
 		<Button icon="sap-icon://bar-code" text="Scan" tooltip="Scan barcode" visible="{device>/barcodeScanEnabled}" press="onScanForValue">
 			<layoutData>
 				<l:GridData span="L2 M2" />
