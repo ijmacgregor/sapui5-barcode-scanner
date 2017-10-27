@@ -88,7 +88,7 @@ sap.ui.define([
 				}
 			});
 			
-			if(!this._oQuaggaEventHandlersAttached){
+			if(!this._bQuaggaEventHandlersAttached){
 				// Attach event handlers...
 
 				Quagga.onProcessed(function(result) {
@@ -128,7 +128,7 @@ sap.ui.define([
 				}.bind(this));
 				
 				// Set flag so that event handlers are only attached once...
-				this._oQuaggaEventHandlersAttached = true;
+				this._bQuaggaEventHandlersAttached = true;
 			}
 			
 			return oDeferred.promise();
